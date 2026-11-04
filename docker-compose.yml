@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    # Restart on source changes; `docker compose watch` syncs them into the container.
+    command: ["node_modules/.bin/tsx", "watch", "src/index.ts"]
+    # JEV_API_KEY and friends are passed in at runtime; .env is never copied into the image.
+    env_file: ./backend/.env
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src
+          target: /app/src
+        - action: rebuild
+          path: ./backend/package.json
+        - action: rebuild
+          path: ./backend/package-lock.json
