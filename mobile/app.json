@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
@@ -20,6 +20,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Scavenger Hunt uses your camera to photograph the objects you find.",
+          "photosPermission": "Scavenger Hunt lets you pick a photo of the object you found.",
+          "microphonePermission": false
+        }
+      ]
+    ]
   }
 }

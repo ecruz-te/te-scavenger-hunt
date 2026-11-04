@@ -14,15 +14,19 @@ Scavenger hunt MVP. Players photograph items; [Jev AI](https://jev-ai.pro/) iden
 
 | | mobile/ | backend/ |
 |---|---|---|
-| Run | `npx expo start --tunnel` | `npm run dev` |
+| Run | `npx expo start --tunnel` | `npm run dev`, or `docker compose watch` from the repo root (hot reload) |
 | Test | `npm test` (jest-expo + RNTL) | `npm test` (node:test via tsx + supertest) |
 | Typecheck | `npm run typecheck` | `npm run typecheck` |
 | Add dep | `npx expo install <pkg>` | `npm install <pkg>` |
+| Config | `.env.local`: `EXPO_PUBLIC_API_URL` (backend URL reachable from the phone) | `.env`: `JEV_API_KEY` |
+
+Jev is called through `@typesafe-ai/sdk` pointed at `https://jev-ai.pro/api` (see `backend/src/jev.ts`). Images need the `jev-preview` model and the `TypeSafe-Danger-Zone-Images` header.
 
 ## Coding conventions
 
 - TypeScript, `strict` on. Avoid `any`. Type API request/response shapes and share them where practical.
 - React: function components and hooks only. Keep components small; move logic into hooks or plain functions so it can be tested.
+- Mobile network requests go through React Query (`@tanstack/react-query`). One hook per file: reads in `mobile/src/api/queries/` (`useQuery`), writes/actions in `mobile/src/api/mutations/` (`useMutation`). Each file holds its fetch function and response types, and uses the shared `request()` helper in `mobile/src/api/request.ts`.
 - Backend: build routes in `src/app.ts` (`createApp()`) so tests can use it without opening a port. `src/index.ts` only boots the server.
 - Read config from `process.env`. Never hardcode secrets or URLs that vary by environment.
 - Prefer built-in Expo modules (`expo-camera`, `expo-image-picker`, …). Don't add a dependency without a clear reason.
